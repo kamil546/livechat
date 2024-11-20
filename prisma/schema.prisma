@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root@localhost:3306/livechat"
+}
+
+model chat_users {
+  user_id         Int      @id @default(autoincrement())
+  username        String   @db.VarChar(18)
+  email           String   @db.VarChar(32)
+  pass_hash       String   @db.VarChar(255)
+  avatar_path     String?  @db.VarChar(255)
+  bg_path         String?  @db.VarChar(255)
+  theme_id        Int      @default(1)
+  ipaddr          String   @db.VarChar(15)
+  created_time    DateTime @default(now()) @db.Timestamp(0)
+  lastactive_time DateTime @default(now()) @db.Timestamp(0)
+}
