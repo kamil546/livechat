@@ -46,7 +46,7 @@
                     <div class="form-field">
                         <div class="field-ico"><i class="bx bx-user"></i></div>
                         <div class="field-input">
-                            <input maxlength="32" placeholder="Login" type="text" name="f_log_login">
+                            <input maxlength="24" placeholder="Login" type="text" name="f_log_login">
                         </div>
                     </div>
                     <div class="form-field">
@@ -75,6 +75,10 @@
     </div>
 </div>
 <script type="text/javascript">
+if(localStorage.getItem('jwt_token')){
+    window.location.href='/app';
+}
+
 
 $('.auth-mode-btn').on('mouseover',function(){
   $('.auth-mode-btn').removeClass('active1');

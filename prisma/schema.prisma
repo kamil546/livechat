@@ -7,15 +7,102 @@ datasource db {
   url      = "mysql://root@localhost:3306/livechat"
 }
 
+model chat_acc_files {
+  file_id                                              Int             @id @default(autoincrement())
+  user_id                                              Int
+  file_name                                            String          @db.VarChar(255)
+  file_type                                            String          @db.VarChar(12)
+  file_path                                            String          @db.VarChar(255)
+  created_time                                         DateTime        @default(now()) @db.Timestamp(0)
+  chat_users_chat_acc_files_user_idTochat_users        chat_users      @relation("chat_acc_files_user_idTochat_users", fields: [user_id], references: [user_id], onUpdate: Restrict, map: "chat_acc_files_ibfk_1")
+  chat_channels                                        chat_channels[]
+  chat_users_chat_users_avatar_file_idTochat_acc_files chat_users[]    @relation("chat_users_avatar_file_idTochat_acc_files")
+
+  @@index([user_id], map: "user_id")
+}
+
+model chat_channel_members {
+  member_id     Int             @id @default(autoincrement())
+  user_id       Int
+  channel_id    Int
+  member_role   Int?
+  member_nick   String?         @db.VarChar(24)
+  join_time     DateTime        @default(now()) @db.Timestamp(0)
+  chat_users    chat_users      @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "chat_channel_members_ibfk_1")
+  chat_channels chat_channels   @relation(fields: [channel_id], references: [channel_id], onUpdate: Restrict, map: "chat_channel_members_ibfk_2")
+  chat_files    chat_files[]
+  chat_messages chat_messages[]
+
+  @@index([channel_id], map: "channel_id")
+  @@index([user_id], map: "user_id")
+}
+
+model chat_channels {
+  channel_id           Int                    @id @default(autoincrement())
+  creator_id           Int
+  channel_name         String                 @db.VarChar(32)
+  channel_desc         String                 @db.VarChar(150)
+  ico_file_id          Int?
+  channel_style        Int?
+  created_time         DateTime               @default(now()) @db.Timestamp(0)
+  pub_hash_key         String?                @db.VarChar(255)
+  public               Boolean?               @default(true)
+  chat_channel_members chat_channel_members[]
+  chat_users           chat_users             @relation(fields: [creator_id], references: [user_id], onUpdate: Restrict, map: "chat_channels_ibfk_1")
+  chat_acc_files       chat_acc_files?        @relation(fields: [ico_file_id], references: [file_id], onUpdate: Restrict, map: "chat_channels_ibfk_2")
+  chat_files           chat_files[]
+  chat_messages        chat_messages[]
+
+  @@index([creator_id], map: "creator_id")
+  @@index([ico_file_id], map: "ico_file_id")
+}
+
+model chat_files {
+  file_id              Int                  @id @default(autoincrement())
+  channel_id           Int
+  member_id            Int
+  file_name            String               @db.VarChar(255)
+  file_type            String               @db.VarChar(12)
+  file_path            String               @db.VarChar(255)
+  created_time         DateTime             @default(now()) @db.Timestamp(0)
+  encrypted            Boolean?             @default(false)
+  chat_channels        chat_channels        @relation(fields: [channel_id], references: [channel_id], onUpdate: Restrict, map: "chat_files_ibfk_1")
+  chat_channel_members chat_channel_members @relation(fields: [member_id], references: [member_id], onUpdate: Restrict, map: "chat_files_ibfk_2")
+
+  @@index([channel_id], map: "channel_id")
+  @@index([member_id], map: "member_id")
+}
+
+model chat_messages {
+  message_id           Int                  @id @default(autoincrement())
+  channel_id           Int
+  member_id            Int
+  message_txt          String               @db.Text
+  message_type         Int?
+  created_time         DateTime             @default(now()) @db.Timestamp(0)
+  pub_hash_key         String?              @db.Text
+  encrypted            Boolean?             @default(false)
+  chat_channels        chat_channels        @relation(fields: [channel_id], references: [channel_id], onUpdate: Restrict, map: "chat_messages_ibfk_1")
+  chat_channel_members chat_channel_members @relation(fields: [member_id], references: [member_id], onUpdate: Restrict, map: "chat_messages_ibfk_2")
+
+  @@index([channel_id], map: "channel_id")
+  @@index([member_id], map: "member_id")
+}
+
 model chat_users {
-  user_id         Int      @id @default(autoincrement())
-  username        String   @db.VarChar(18)
-  email           String   @db.VarChar(32)
-  pass_hash       String   @db.VarChar(255)
-  avatar_path     String?  @db.VarChar(255)
-  bg_path         String?  @db.VarChar(255)
-  theme_id        Int      @default(1)
-  ipaddr          String   @db.VarChar(15)
-  created_time    DateTime @default(now()) @db.Timestamp(0)
-  lastactive_time DateTime @default(now()) @db.Timestamp(0)
+  user_id                                                  Int                    @id @default(autoincrement())
+  username                                                 String                 @db.VarChar(24)
+  email                                                    String?                @db.VarChar(48)
+  avatar_file_id                                           Int?
+  pass_hash                                                String                 @db.VarChar(255)
+  theme_id                                                 Int?
+  ipaddr                                                   String?                @db.VarChar(15)
+  created_time                                             DateTime               @default(now()) @db.Timestamp(0)
+  lastactive_time                                          DateTime               @default(now()) @db.Timestamp(0)
+  chat_acc_files_chat_acc_files_user_idTochat_users        chat_acc_files[]       @relation("chat_acc_files_user_idTochat_users")
+  chat_channel_members                                     chat_channel_members[]
+  chat_channels                                            chat_channels[]
+  chat_acc_files_chat_users_avatar_file_idTochat_acc_files chat_acc_files?        @relation("chat_users_avatar_file_idTochat_acc_files", fields: [avatar_file_id], references: [file_id], onDelete: Restrict, onUpdate: Restrict, map: "chat_users_ibfk_1")
+
+  @@index([avatar_file_id], map: "avatar_file_id")
 }

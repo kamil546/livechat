@@ -26,12 +26,21 @@
 }
 
 
+@media (max-width:1550px){
+body{
+    zoom:0.8!important;
+}
+
+}
+
+
 
 
 
 :root{
     --white1: #fafafa;
     --gray1: #f5f5f5;
+    --gray2: #b9b9b9;
     --black1: #282828;
     --black2: #201e2f;
     --blue1: #0183ff;
@@ -56,7 +65,7 @@ input:-webkit-autofill {
     
 }
 ::-webkit-scrollbar{
-width:6px;
+    width:6px;
 }
 ::-webkit-scrollbar-track {
     background: white;
@@ -65,6 +74,18 @@ width:6px;
 input::placeholder {
     color: #898989;
     font-weight: normal;
+}
+.enabled{
+    color: #201e2f!important;
+}
+.disabled{
+    color: var(--gray2)!important;
+}
+.zoom{
+    zoom: 0.85;
+}
+.roto-180{
+    transform: rotate(180deg);
 }
 
 
@@ -388,6 +409,7 @@ body,html{
 }
 
 .app-sidebar{
+    user-select: none;
     display: flex;
     flex-direction: column;
     flex: none;
@@ -397,6 +419,7 @@ body,html{
     border-right: 3px solid #f9f9f9;  
     overflow: hidden;
     overflow-y:auto;
+    font-size: 0.95em;
 }
 .sidebar-top{
     display: flex;
@@ -533,13 +556,14 @@ body,html{
 
 .chat-threads{
     display: flex;
+    flex: none;
+    width: 360px;
     flex-direction: column;
     justify-content: flex-start;
-    min-width: max-content;
     padding: 24px;
     box-sizing: border-box;
     border-right: 3px solid #f9f9f9;
-    letter-spacing: 1.3px; 
+    font-size:1.1em;
 }
 
 .chat-threads-header{
@@ -548,8 +572,8 @@ body,html{
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    font-size: 1.7em;
-    font-weight: 500;
+    font-size: 1.8em;
+    font-weight: 900;
 }
 .threads-header-options{
     display: flex;
@@ -573,7 +597,6 @@ body,html{
     padding: 8px;
     border-radius: 6px;
     background: #f8f8f8;
-    border: 1px solid #ebebeb;
     margin-top: 2px;
     font-size: .9em;  
 }
@@ -590,7 +613,7 @@ body,html{
     display: flex;
     padding: 0 8px;
     font-size: 1.2em;
-    color: #978989;  
+    color: var(--gray2);  
 }
 .chat-threads-list{
     display: flex;
@@ -600,16 +623,16 @@ body,html{
     flex: auto;  
 }
 .list-mode-ovl{
+    user-select: none;
     display: flex;
     flex-direction: row;
     align-items: center;
     padding: 4px;
     border-radius: 6px;
     background-color: #f8f8f8;
-    color: var(--black2);
+    color: var(--gray2);
     font-weight: 500;
-    font-size: 0.9em;
-    border: 1px solid #ebebeb;
+    font-size: 0.95em;
 }
 .list-mode-btn{
     display: flex;
@@ -627,10 +650,10 @@ body,html{
 .threads-list{
     display: flex;
     flex-direction: column;
-    gap: 22px;
-    margin-top: 22px;
+    gap: 26px;
+    margin-top: 26px;
     justify-content: flex-start;
-    padding-right: 50px;  
+    padding-right: 60px;  
 }
 .thread-bar{
     display: flex;
@@ -654,6 +677,27 @@ body,html{
     font-size: 0.75em;
     font-weight: 400;
     color: #cfcfcf;
+    text-wrap: nowrap;
+    overflow: hidden;
+    max-width: 220px;
+}
+.atp-mobile{
+    display: flex;
+    justify-content: flex-end;
+    padding: 18px;
+    border-bottom: 1px solid #f8f8f8;  
+}
+.close-btn{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.4em;
+    color: #201e2f;
+    cursor: pointer;  
+}
+.close-btn i{
+    font-size: 1.4em;
 }
 
 
@@ -661,6 +705,7 @@ body,html{
     display: flex;
     flex: auto;
     flex-direction: row;
+    position: relative;
 }
 .active-thread-form{
     display: flex;
@@ -711,10 +756,10 @@ body,html{
 .active-thread-option{
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
-.active-thread-option{
-    display: flex;
-    align-items: center;
+.active-thread-option:nth-of-type(2){
+    color: #e1e1e1;
 }
 .thread-messages-box{
     padding: 44px 0;
@@ -841,6 +886,17 @@ body,html{
 }
 
 
+.mobile{
+    display: flex;
+    position: absolute;
+    left: 0;
+    top: 0;
+    flex: auto;
+    background: white;
+    width: 100%!important;
+    height: 100%!important;   
+}
+
 .active-thread-profile{
     flex: none;
     display: flex;
@@ -949,6 +1005,7 @@ body,html{
 }
 .profile-section-header{
     display: flex;
+    flex: auto;
     flex-direction: row;
     align-items: center;
     gap: 14px;
@@ -964,6 +1021,7 @@ body,html{
     flex-direction: column;
     gap:8px;
     max-height: 240px;
+    width: 100%;
     overflow: hidden;
     overflow-y:auto;
 }

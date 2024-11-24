@@ -23,7 +23,6 @@ exports.register = async (req,res) =>{
 
         const pass_salt = await bcrypt.genSalt(10);
         const pass_hash = await bcrypt.hash(user.pass,pass_salt);
-
         const ipaddr = req.connection.remoteAddress;
 
         const ExistingUser = await prisma.chat_users.findFirst({
@@ -55,7 +54,6 @@ exports.register = async (req,res) =>{
         console.log(message);
         res.status(500).json({message:"Błąd przy dodawaniu nowego uzytkownika.."});
     }
-    console.log(req.body);
 };
 
 
@@ -92,7 +90,7 @@ exports.login = async (req,res) =>{
     }
     catch(err){
         console.log(err);
-        res.status(500).json({err:"Błąd przy próbie logowania.."});
+        res.status(500).json({message:"Błąd przy próbie logowania.."});
     }
     console.log(req.body);
 
