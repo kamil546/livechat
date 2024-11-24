@@ -62,7 +62,7 @@
 </div>
 
 <div class="chat-threads-list">
-    <div class="list-mode-ovl">
+    <div data-option="1" class="list-mode-ovl">
         <div data-option="0" class="list-mode-btn">Prywatne</div>
         <div data-option="1" class="list-mode-btn active">Publiczne</div>
     </div>
@@ -328,9 +328,6 @@
 <script>
 const jwt_token = localStorage.getItem('jwt_token');
 
-
-
-
 const user_logout = () =>{
 try{
 localStorage.removeItem('user-basic');
@@ -344,33 +341,8 @@ catch(err){
 };  
 
 
-
-
-
-
-
-
-
-$(document).ready(function(){
-$(window).on('resize',screen_update).trigger('resize');  
-$('.sidebar-user-logout').on('click',user_logout);
-
-$('.list-mode-btn').on('click',async function(){
-var is_public = $(this).attr('data-option');
-if (is_public=='0')is_public = false;
-else is_public = true;
-
-if(await load_chats(is_public)){
-    $('.list-mode-btn').removeClass('active');
-    $(this).addClass('active');    
-} 
-});
-
-
-
-
-
 const load_chats = async (is_public=true) =>{
+    console.log('ladowanie chatow');
     var headers = {'Content-Type': 'application/json',};
     if (jwt_token) headers['Authorization'] = `Bearer ${jwt_token}`;
     
@@ -378,7 +350,7 @@ const load_chats = async (is_public=true) =>{
     var search_txt = null;
 
     if(!typeof is_public == 'boolean') return false;
-    if(($('#search_txt').val())&&($('#search_txt').val()!=='')) search_txt = $('#search_txt').val();
+    if(($('#search_txt').val()!=='')) search_txt = $('#search_txt').val();
 
     
     try{
@@ -470,6 +442,53 @@ if(user_basic.avatar_file_id){
     console.log('logo ustawione..');
 }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+$(document).ready(function(){
+$(window).on('resize',screen_update).trigger('resize');  
+$('.sidebar-user-logout').on('click',user_logout);
+
+
+$('#search_txt').on('keyup',async function(){
+var is_public = $('.list-mode-ovl').attr('data-option');
+if (is_public=='false')is_public = false;
+else is_public = true;
+if(load_chats(is_public)) return true;
+
+
+return false;
+});
+
+
+
+
+
+$('.list-mode-btn').on('click',async function(){
+var is_public = $(this).attr('data-option');
+if (is_public=='0')is_public = false;
+else is_public = true;
+
+
+if(await load_chats(is_public)){
+    $('.list-mode-ovl').attr('data-option',is_public);
+    $('.list-mode-btn').removeClass('active');
+    $(this).addClass('active');    
+} 
+});
+
+
+
+
 
 
 

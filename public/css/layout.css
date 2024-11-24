@@ -75,9 +75,6 @@ input::placeholder {
     color: #898989;
     font-weight: normal;
 }
-.enabled{
-    color: #201e2f!important;
-}
 .disabled{
     color: var(--gray2)!important;
 }
@@ -661,6 +658,7 @@ body,html{
     align-items: center;
     gap: 12px;
     box-sizing: border-box;
+    cursor: pointer;
 }
 .thread-bar-info{
     display: flex;
