@@ -8,7 +8,6 @@ const {valid_schema_user_login, valid_schema_user_register} = require('../valida
 
 
 exports.register = async (req,res) =>{
-
     const user = {
         username : req.body.f_reg_username,
         email: req.body.f_reg_email,
@@ -78,7 +77,7 @@ exports.login = async (req,res) =>{
                 ]
             }
         });
-        if(!login_user) return res.status(401).json({ message:'Nie odnaleziono konta o podanym loginie..'});
+        if(!login_user) return res.status(404).json({ message:'Nie odnaleziono konta o podanym loginie..'});
 
         const validPass = await bcrypt.compare(user.pass,login_user.pass_hash);
         if(!validPass) return res.status(401).json({message:'Dane logowania są nie poprawne..'});

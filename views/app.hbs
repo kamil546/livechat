@@ -4,6 +4,7 @@
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     <link rel="stylesheet" href="/css/main.css" type="text/css">
     <link rel="shortcut icon" href="/img/favicon_tnf.ico" type="image/x-icon">
     <meta charset="utf-8">
@@ -182,7 +183,7 @@
                 <div class="message-form-options">
                     <div class="message-form-option"><i class="bx bxs-plus-circle"></i></div>
                 </div>
-                <div class="message-form-input"><input id="mess-input" type="text"  placeholder="Napisz wiadomość .."></div>
+                <div class="message-form-input"><div id="mess-input" contenteditable="true" data-text="Napisz wiadomość .."  aria-autocomplete="off"></div></div>
                 <div class="message-form-submit" id="mess-send-btn"><i class="bx bxs-send"></i></div>
 </div>
 </div>
@@ -237,19 +238,6 @@
         <div class="profile-section-res">
             UKRYTE
         </div>
-</div>
-
-<div class="profile-section-tile">
-    <div class="profile-section-option">
-    <div class="profile-section-header">
-        <div class="profile-section-ico" style="color: #ff5a77;"><i class="bx bxs-hot"></i></div>
-        <div class="profile-option-title">Reakcja</div>
-    </div>
-    <div class="profile-section-btn"><i class="bx bxs-chevron-down"></i></div>
-    </div>
-    <div class="profile-section-res">
-        UKRYTE
-    </div>
 </div>
 
 <div class="profile-section-tile">
@@ -326,7 +314,150 @@
 <div class="loading-ovl"></div>
 <script src="/js/ui.js"></script>
 <script>
-const jwt_token = localStorage.getItem('jwt_token');
+const jwt_token = localStorage.getItem('jwt_token') || null;
+let socket = null;
+let currentChannelId = null;
+
+
+const initSocket = (channelId) => {
+    if (socket && socket.connected && currentChannelId === channelId) {
+        console.log('Już połączono z tym kanałem');
+        return;
+    }
+
+    if (socket && socket.connected) {
+        socket.emit('leaveChannel', { channelId: currentChannelId });
+        socket.disconnect();
+        console.log('Rozłączono z poprzednim kanałem');
+    }
+
+    socket = io('http://localhost:3001', { query: { token: jwt_token } });
+
+    socket.on('connect', () => {
+        console.log('Połączono z serwerem');
+
+        socket.emit('joinChannel', {channelId}, (response) => {
+        if (response.success) {
+            console.log('Dołączono do kanału.');
+        } else {
+            console.error('Błąd:', response.message);
+            return false;
+        }
+        });
+
+        currentChannelId = channelId;
+    });
+
+    socket.on('newMessage', (data) => {
+
+        const html_data = `
+            <div data-option="${data.message_id}" class='mess-cloud'>
+                <div class="cloud-contents">
+                    <div class="prof-avatar-sm">
+                        <div class="avatar-contents">
+                            <img src="${data.avatar}" alt="${data.username}'s avatar">
+                        </div>
+                        <div class="user-status-ico"></div>
+                    </div>
+                    <div class="mess-cloud-content">
+                        <div class="mess-cloud-details">
+                            <div data-option="${data.member_id}" class="mess-cloud-nick">${data.username}</div>
+                            <div class="mess-cloud-time">${data.created_time}</div>
+                        </div>
+                        <div class="mess-cloud-text">${data.message}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        $('.thread-messages-box').append(html_data);
+        $('.thread-messages-box').scrollTop($('.thread-messages-box')[0].scrollHeight);
+
+    });
+
+    socket.on('connect_error', (error) => {
+        console.error('Błąd połączenia: ', error);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Rozłączono z serwerem');
+    });
+};
+
+
+
+const sendMessage = () => {
+    console.log('test');
+    const message = $('#mess-input').html().trim();
+    if (message!=='') {
+        socket.emit('sendMessage', { 
+            channelId: currentChannelId, 
+            message: message 
+        },(response)=>{
+            if(!response.success){
+                console.log(`Wystapil blad:`+response.message);
+                return;
+            }
+            $('#mess-input').html('');
+        });
+    }
+    
+};
+
+
+
+
+
+
+
+
+
+const switch_chat = async (id=1) => {
+    var headers = {'Content-Type': 'application/json',};
+    if (jwt_token) headers['Authorization'] = `Bearer ${jwt_token}`;
+    try {
+        const response = await fetch(`/api/messages/${id}/${id}`, {
+            method: 'GET',
+            headers: headers
+        });
+
+        if (!response.ok) {
+            throw new Error("Błąd podczas pobierania historii wiadomości.");
+        }
+        const messages = await response.json();
+        var html_data = ``;
+
+        messages.forEach((data) => {
+            html_data+= `
+                <div data-option="${data.mess_id}" class='mess-cloud'>
+                    <div class="cloud-contents">
+                        <div class="prof-avatar-sm">
+                            <div class="avatar-contents">
+                                <img src="${data.avatar}" alt="${data.username}'s avatar">
+                            </div>
+                            <div class="user-status-ico"></div>
+                        </div>
+                        <div class="mess-cloud-content">
+                            <div class="mess-cloud-details">
+                                <div data-option="${data.member_id}" class="mess-cloud-nick">${data.nickname}</div>
+                                <div class="mess-cloud-time">${data.created_time}</div>
+                            </div>
+                            <div class="mess-cloud-text">${data.message}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        $('.thread-messages-box').html(html_data);
+        $('.thread-messages-box').scrollTop($('.thread-messages-box')[0].scrollHeight);
+        console.log("Historia wiadomości została załadowana..");
+        await initSocket(id);
+    } catch (error) {
+        console.error("Wystąpił błąd podczas przełączania kanału:", error);
+        alert("Nie udało się przełączyć kanału. Spróbuj ponownie.");
+    }
+};
+
+
 
 const user_logout = () =>{
 try{
@@ -364,13 +495,17 @@ const load_chats = async (is_public=true) =>{
     });
 
     const data = await response.json();
+    console.log(data);
     if(response.ok){
         var html_data = ``;
         data.list.forEach((item)=>{
+        var ico_path = '/img/defaults/avatar.png';
+        if(item.channel_ico) ico_path = './uploads/user/'+item.channel_ico;
+
             html_data+=`
           <div data-option="${item.channel_id}" class="thread-bar">
             <div class="prof-avatar-sm">
-                <div class="avatar-contents"><img src="https://swiatkryptowalut.com/forum/avatar/default.png" alt="avatar"></div>
+                <div class="avatar-contents"><img src="${ico_path}" alt="avatar"></div>
             <div class="user-status-ico"></div>
             </div>
             <div class="thread-bar-info">
@@ -380,8 +515,24 @@ const load_chats = async (is_public=true) =>{
             </div>  
             `;
         });
+        if(chat_list.html(html_data)){
 
-        if(chat_list.html(html_data)) return true;
+            var channels_list = $('.thread-bar');
+
+            channels_list.each(function(index,el){
+                var chat_index = $(el).attr('data-option');
+
+                $(el).on('click',function(){
+                    switch_chat(chat_index);
+                    $(channels_list).find('.thread-bar-title').removeClass('active2');
+                    $(el).find('.thread-bar-title').addClass('active2');
+                    });
+
+            });
+
+            return true;
+        } 
+
     }
 
     return false;
@@ -469,7 +620,11 @@ if(load_chats(is_public)) return true;
 return false;
 });
 
+$('#mess-send-btn').on('click',sendMessage);
+$('#mess-input').on('keydown',function(e){
+    if(e.which === 13 && !e.shiftKey) sendMessage();
 
+});
 
 
 
@@ -495,6 +650,7 @@ if(await load_chats(is_public)){
 
 set_user();
 load_chats();
+switch_chat();
 
 });
 

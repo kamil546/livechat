@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root@localhost:3306/livechat"
+  url      = env("DATABASE_URL")
 }
 
 model chat_acc_files {
@@ -47,6 +47,7 @@ model chat_channels {
   created_time         DateTime               @default(now()) @db.Timestamp(0)
   pub_hash_key         String?                @db.VarChar(255)
   public               Boolean?               @default(true)
+  encrypted            Int?
   chat_channel_members chat_channel_members[]
   chat_users           chat_users             @relation(fields: [creator_id], references: [user_id], onUpdate: Restrict, map: "chat_channels_ibfk_1")
   chat_acc_files       chat_acc_files?        @relation(fields: [ico_file_id], references: [file_id], onUpdate: Restrict, map: "chat_channels_ibfk_2")
@@ -80,8 +81,6 @@ model chat_messages {
   message_txt          String               @db.Text
   message_type         Int?
   created_time         DateTime             @default(now()) @db.Timestamp(0)
-  pub_hash_key         String?              @db.Text
-  encrypted            Boolean?             @default(false)
   chat_channels        chat_channels        @relation(fields: [channel_id], references: [channel_id], onUpdate: Restrict, map: "chat_messages_ibfk_1")
   chat_channel_members chat_channel_members @relation(fields: [member_id], references: [member_id], onUpdate: Restrict, map: "chat_messages_ibfk_2")
 

@@ -47,7 +47,7 @@ body{
     --blue2: #007bee;
 
 }
-input:focus-visible{
+input:focus-visible,#mess-input:focus-visible{
     font-size:1em!important;
     border:0!important;
     outline: none!important;
@@ -72,9 +72,14 @@ input:-webkit-autofill {
     border-radius: 6px;
 }
 input::placeholder {
-    color: #898989;
+    color: var(--gray2);
     font-weight: normal;
 }
+[contentEditable=true]:empty:not(:active):before {
+    content: attr(data-text);
+    color: var(--gray2);
+}
+
 .disabled{
     color: var(--gray2)!important;
 }
@@ -102,6 +107,21 @@ body,html{
     overflow: auto !important;
     background-color: var(--white1);
 }
+
+#mess-input{
+    -webkit-user-modify: read-write-plaintext-only;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-weight: normal;
+    width: 100%;
+    max-height: 80px;
+    padding: 8px;
+    font-size: 1.1em;
+    line-height: 120%;
+}
+
+
+
 .auth-mode-ovl a{
     color:inherit!important;
     text-decoration: none;
@@ -127,6 +147,9 @@ body,html{
 .active1{
     background-color: white!important;
     font-weight: 600!important;
+}
+.active2{
+    font-weight: 500!important;
 }
 .md-cnt{
     display: flex;
@@ -659,6 +682,7 @@ body,html{
     gap: 12px;
     box-sizing: border-box;
     cursor: pointer;
+    overflow: hidden;
 }
 .thread-bar-info{
     display: flex;
@@ -666,7 +690,7 @@ body,html{
     letter-spacing: 0.01em; 
 }
 .thread-bar-title{
-    font-weight: 500;
+    font-weight: 400;
     line-height: 1.2em;
 }
 .thread-bar-details{
@@ -787,7 +811,7 @@ body,html{
 .mess-cloud-content{
     display: flex;
     flex-direction: column;
-    gap: 8px; 
+    gap: 4px; 
 }
 .mess-cloud-details{
     display: flex;
@@ -864,9 +888,12 @@ body,html{
 }
 .message-form-input{
     display: flex;
+    flex-direction: column;
     flex: auto;
+    gap:4px;
     align-items: center;
     font-size: 1.2em;
+    padding: 0 20px;
 }
 .message-form-input input{
     width: 100%;
