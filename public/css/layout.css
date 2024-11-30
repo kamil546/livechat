@@ -34,6 +34,25 @@ body{
 }
 
 
+@media (max-width:1550px){
+    body{
+        zoom:0.8!important;
+    }
+    
+    }
+
+@media (max-width:800px){
+    .app-sidebar,.chat-threads{
+        display: none!important;
+    }
+    .app-ovl{
+        width: 100%!important;
+        height: 100%!important;
+        margin: 0 !important;
+    }
+
+
+}
 
 
 
@@ -45,6 +64,8 @@ body{
     --black2: #201e2f;
     --blue1: #0183ff;
     --blue2: #007bee;
+
+    --primary-color: #0183ff;
 
 }
 input:focus-visible,#mess-input:focus-visible{
@@ -82,6 +103,9 @@ input::placeholder {
 
 .disabled{
     color: var(--gray2)!important;
+}
+.enabled{
+    color: var(--black2)!important;
 }
 .zoom{
     zoom: 0.85;
@@ -142,7 +166,7 @@ body,html{
     box-shadow: 0px 0px 22px 6px rgba(217, 213, 217, 0.05);
 }
 .active{
-    color: #0183ff;
+    color: var(--primary-color);
 }
 .active1{
     background-color: white!important;
@@ -246,12 +270,6 @@ body,html{
     padding: 0 4px;
     box-sizing: content-box;
 }
-.h-line{
-    display: flex;
-    flex: auto;
-    height: 1px;
-    background-color: #efefef;
-}
 
 .form-header {
     display: flex;
@@ -347,7 +365,7 @@ body,html{
     padding: 16px 0;
     border: 0;
     border-radius: 12px;
-    background: #0183ff;
+    background: var(--primary-color);
     color: #ffffff;
 }
 
@@ -371,7 +389,7 @@ body,html{
     padding: 6px;
     border-radius: 50%;
     background-color: #dbedff;
-    color: #0183ff;
+    color: var(--primary-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -664,7 +682,7 @@ body,html{
     cursor: pointer;
 }
 .list-mode-btn.active{
-    color: #0183ff;
+    color: var(--primary-color);
     background-color: white;
 }
 .threads-list{
@@ -829,8 +847,9 @@ body,html{
 }
 .mess-cloud-text{
     word-wrap: break-word;
+    min-width: min-content;
     max-width: 66%;
-    padding: 12px;
+    padding: 12px 18px;
     background-color: #f4f4f4;
     border-radius: 4px 16px 16px 16px;
     font-weight: 400;
@@ -838,25 +857,25 @@ body,html{
     color: #201e2f;   
 }
 
-.mess-cloud-rtl{
+.mess-cloud.rtl{
     display: flex;
     flex: none;
     flex-direction: column;
     align-items: flex-end;
     width: 100%;
 }
-.mess-cloud-rtl .mess-cloud-content{
+.mess-cloud.rtl .mess-cloud-content{
     align-items: flex-end;  
 }
-.mess-cloud-rtl .mess-cloud-details, .mess-cloud-rtl .cloud-contents{
+.mess-cloud.rtl .mess-cloud-details, .mess-cloud.rtl .cloud-contents{
     flex-direction: row-reverse;
 }
-.mess-cloud-rtl .cloud-contents{
+.mess-cloud.rtl .cloud-contents{
     margin:0;
     margin-right: 28px;
 }
-.mess-cloud-rtl .mess-cloud-text{
-    background-color: #0183ff;
+.mess-cloud.rtl .mess-cloud-text{
+    background-color: var(--primary-color);
     color: #f9fcff;
     border-radius: 16px 4px 16px 16px;
 }
@@ -906,7 +925,7 @@ body,html{
     justify-content: center;
     flex: 0;
     font-size: 1.8em;
-    color: #0183ff;
+    color: var(--primary-color);
     cursor: pointer;
 }
 
@@ -1043,6 +1062,7 @@ body,html{
 .profile-section-res{
     display: none;
     padding:8px;
+    padding-bottom:24px;
     flex-direction: column;
     gap:8px;
     max-height: 240px;
@@ -1091,4 +1111,70 @@ body,html{
     color: #201e2f;
     background-color: #f8f8f8;
     border-radius: 10px;
+}
+
+.mess-hr{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    width: 100%;
+    padding: 0 32px;
+}
+.h-line{
+    display: flex;
+    flex: auto;
+    height: 1px;
+    background-color: #efefef;
+}
+.h-info{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: none;
+    padding: 16px;
+    color: var(--gray2);
+    font-size:1.2em;
+}
+.chat-style-option{
+    display: flex;
+    padding: 3px;
+    background: #ffffff;
+    color: var(--blue1);
+    border: 3px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.chat-styles-ovl{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 12px; 
+}
+.chat-styles-ovl{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 12px; 
+    gap:18px;
+}
+.chat-style-option svg{
+    width: 24px;
+    height: 24px;
+}
+.chat-style-option path{
+    fill:currentColor;
+}
+.chat-style-option:nth-of-type(2){
+    color: #65bf92;
+}
+.chat-style-option:nth-of-type(3){
+    color: #ff4545;
+}
+
+.option-selected{
+    border-color:currentColor;
+    transform: scale(1.15);
 }

@@ -25,11 +25,20 @@ res.status(200).json(user_basic);
 
 exports.get_messages = async (req, res) => {
 
-
     const user_id = req.user ? req.user.user_id : 0;
     const channel_id  = req.params.channel_id;
-    const page_id  = req.params.page_id || 1;
-    const page_size = 10;
+    const page_size = 30;
+    let condition = {
+        channel_id: parseInt(channel_id,10)
+    };
+    if(req.params.mess_id){
+        condition.message_id = {
+            lt: parseInt(req.params.mess_id,10)
+        }
+    };
+
+
+
 
 
 
@@ -49,12 +58,21 @@ exports.get_messages = async (req, res) => {
         });
         if (!userMembership) return res.status(403).json({ error: 'Nie masz dostępu do tego kanału.' });
 
+        const channel_info = {
+            channel_name: channelExists.channel_name,
+            channel_desc: channelExists.channel_desc,
+            channel_style: channelExists.channel_style,
+            channel_type: 'private',
+            my_member_id: userMembership.member_id,
+            ico_file_id: channelExists.ico_file_id,
+            creator_id: channelExists.creator_id,
+        };
 
 
 
         const messages = await prisma.chat_messages.findMany({
-            where: { channel_id: parseInt(channel_id, 10) },
-            orderBy: { created_time: 'asc' },
+            where: condition,
+            orderBy: { message_id: 'desc' },
             select: {
                 message_id: true,
                 message_txt: true,
@@ -72,26 +90,26 @@ exports.get_messages = async (req, res) => {
                     },
                 },
             },
+            take: page_size
         });
+        messages.reverse();
 
         const res_messages = messages.map((msg) => ({
             mess_id: msg.message_id,
             member_id: msg.chat_channel_members.member_id,
             message: msg.message_txt,
-            created_time: msg.created_time,
+            created_time: new Date(msg.created_time).getDate(),
             username: msg.chat_channel_members.chat_users.username,
             avatar: msg.chat_channel_members.chat_users.avatar_file_id? `/uploads/user/${msg.chat_channel_members.chat_users.avatar_file_id}`: '/img/defaults/avatar.png',
             nickname: msg.chat_channel_members.member_nick || msg.chat_channel_members.chat_users.username,
         }));
+        
 
-        res.status(200).json(res_messages);
+        res.status(200).json({channel_info: channel_info, messages: res_messages});
     } catch (error) {
         console.error('Błąd podczas pobierania wiadomości:', error);
         res.status(500).json({ error: 'Wystąpił błąd serwera.' });
     }
-
-
-
 
 
 
