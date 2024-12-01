@@ -163,16 +163,6 @@
                 </div>
             </div>
             </div>
-            <div class="profile-summary-options">
-                <div class="profile-summary-option">
-                    <div class="summary-option-ico"><i class="bx bxs-user-x"></i></div>
-                    <div class="summary-option-text">Usuń</div>
-                </div>
-                 <div class="profile-summary-option">
-                    <div class="summary-option-ico"><i class='bx bxs-cog'></i></div>
-                    <div class="summary-option-text">Zarządzaj</div>
-                </div>
-            </div>
         </div>
 
         <div class="thread-profile-main">
@@ -183,7 +173,7 @@
 
 
 
-<div class="profile-section-tile">
+<div data-option='chat-style' class="profile-section-tile">
 <div class="profile-section-option" >
     <div class="profile-section-header">
         <div class="profile-section-ico" style="color: var(--primary-color)"><i class="bx bxs-palette"></i></div>
@@ -200,7 +190,7 @@
         </div>
 </div>
 
-<div class="profile-section-tile">
+<div data-option="chat-nicks" class="profile-section-tile">
 <div class="profile-section-option">
     <div class="profile-section-header">
         <div class="profile-section-ico" style="color: #65bf92;"><i class="bx bx-hash"></i></div>
@@ -210,7 +200,9 @@
     <div class="profile-section-btn"><i class="bx bxs-chevron-down"></i></div>
     </div>
     <div class="profile-section-res">
-    UKRYTE
+        <div class="res-options">
+            <div data-option="1" class="res-option">Zarządzaj</div>
+        </div>
     </div>
 </div>
 
@@ -221,39 +213,40 @@
 <div class="profile-section-title">Wiecej akcji</div>
 
                 <div class="profile-section-content">
-                    <div class="profile-section-tile">
+                    <div data-option="chat-manage" class="profile-section-tile" style="display:none;">
                         <div class="profile-section-option">
                             <div class="profile-section-header">
                         <div class="profile-section-ico"><i class="bx bxs-group"></i></div>
-                        <div class="profile-option-title">Utworz grupe z uzytkownikiem</div>
+                        <div class="profile-option-title">Dodatkowe opcje</div>
                             </div>
                         <div class="profile-section-btn"><i class="bx bxs-chevron-down"></i></div>
                         </div>
                         <div class="profile-section-res">
-                            UKRYTE
+                            <div class="res-options">
+                                <div data-option="0" class="res-option"><i class='bx bxs-user-x'></i> Usuń</div>
+                                <div data-option="1" class="res-option"><i class='bx bxs-cog' ></i> Zarządzaj</div>
+                            </div>
                         </div>
                     </div>
-                        <div class="profile-section-tile">
+                        <div data-option="chat-shared" class="profile-section-tile">
                         <div class="profile-section-option">
-    <div class="profile-section-header">
-                        <div class="profile-section-ico"><i class="bx bxs-memory-card"></i></div>
-                        <div class="profile-option-title">Udostepnione zasoby</div>
-    </div>
+                        <div class="profile-section-header">
+                            <div class="profile-section-ico"><i class="bx bxs-memory-card"></i></div>
+                            <div class="profile-option-title">Udostepnione zasoby</div>
+                        </div>
 
                         <div class="profile-section-btn"><i class="bx bxs-chevron-down"></i></div>
                         </div>
                         <div class="profile-section-res">
-                            <div class="profile-shared-ovl">
-                                <div class="profile-shared-options">
-                                    <div class="shared-option">Media</div>
-                                    <div class="shared-option">Inne pliki</div>
+                                <div class="res-options">
+                                    <div data-option="1" class="res-option">Media</div>
+                                    <div data-option="2" class="res-option">Inne</div>
+                                </div>
+                                <div class="res-content">
+                                    <div class="shared-photo"></div>
+                                    <div class="shared-photo"></div>                                    
                                 </div>
 
-<div class="profile-shared-res">
-    <div class="shared-photo"></div>
-    <div class="shared-photo"></div>                                    
-</div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -268,7 +261,25 @@
 
 </div>
 </div>
+<div style='display:none;' class="popup-layer">
+
+
+
 <div class="popup-window">
+    <div class="popup-top">
+        <div class="popup-title">Nicki</div>
+        <div class="popup-options">
+            <div class="close-btn1"><i class='bx bx-x'></i></div>
+        </div>
+    </div>
+    <div class="popup-content">
+POPUP_CONTENT
+    </div>
+</div>
+
+
+
+
 
 </div>
 <div class="loading-ovl"></div>
@@ -348,6 +359,22 @@ const initSocket = (channelId) => {
 };
 
 
+const load_popup = async(title,data) => {
+if(!(typeof title === 'string')||(title=='')) return false; 
+if(!(typeof data === 'string')||(data=='')) return false; 
+
+$('.popup-title').text(title);
+$('.popup-content').text(data);    
+$('.popup-layer').show();   
+
+
+    return true;
+};
+
+
+
+
+
 
 const sendMessage = () => {
     console.log('test');
@@ -364,8 +391,65 @@ const sendMessage = () => {
             $('#mess-input').html('');
         });
     }
-    
 };
+
+
+
+
+
+const update_chat = async(key,value) => {    
+const validators = {
+  channel_name: (value) => typeof value === 'string',
+  channel_desc: (value) => typeof value === 'string',
+  channel_style: (value) => Number.isInteger(value),
+  ico_file_id: (value) => Number.isInteger(value),
+};
+const validKeys = Object.keys(validators);
+if (!validKeys.includes(key)){
+    console.log('Podana opcja jest nie prawidłowa..');
+    return false;
+}
+const validValues = validators[key](value);
+if (!validValues) {
+    console.log(`Wartość: ${value} dla '${key}' jest niepoprawna.`);
+    return false;
+}
+var headers = {'Content-Type': 'application/json',};
+if (jwt_token) headers['Authorization'] = `Bearer ${jwt_token}`;
+
+
+
+try{
+const reqData = { [key]: value };
+const response = await fetch(`/api/update-channel/${current_channel_id}`,{
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(reqData)
+});
+const data = await response.json();
+if(!response.ok){
+    console.log(`Podczas aktualizowania wystapil błąd: ${data.error}`);
+    return false;
+}
+
+
+
+
+console.log(data.message);
+return true;
+
+
+}
+catch(err){
+    console.log(`Błąd podczas wysyłania żądania ${err}`);
+}
+
+
+
+
+    return false;
+};
+
 
 
 
@@ -470,7 +554,7 @@ const switch_chat = async (id) => {
         }
         const data = await response.json();
         if(data.length<1) return false;
-        current_member_id = data.channel_info.my_member_id;
+        current_member_id = data.channel_info.member_id;
         let channel_info = data.channel_info;
 
 
@@ -481,6 +565,17 @@ const switch_chat = async (id) => {
             else $('.active-thread-identity .avatar-contents img,.profile-summary-card .avatar-contents img').attr('src','/img/defaults/avatar.png');
             $('.summary-details-date,.active-thread-bar-details-date').text(channel_info.channel_desc);
             if(await load_chat_style(channel_info.channel_style)) console.log('Wczytano styl chatu..');
+
+            $('.thread-bar').find('.thread-bar-title').removeClass('active2');
+            $(`.thread-bar[data-option=${id}]`).find('.thread-bar-title').addClass('active2');
+
+
+            if(channel_info.member_role==1){
+                $('.profile-section-tile[data-option=chat-manage] .res-option').attr('data-option',channel_info.channel_id);
+                $('.profile-section-tile[data-option=chat-manage]').slideDown();
+            } 
+            else $('.profile-section-tile[data-option=chat-manage]').slideUp();
+
 
 
         }
@@ -590,16 +685,12 @@ const load_chats = async (is_public=true) =>{
             `;
         });
         if(chat_list.html(html_data)){
-
             var channels_list = $('.thread-bar');
-
             channels_list.each(function(index,el){
                 var chat_index = $(el).attr('data-option');
 
-                $(el).on('click',function(){
-                    switch_chat(chat_index);
-                    $(channels_list).find('.thread-bar-title').removeClass('active2');
-                    $(el).find('.thread-bar-title').addClass('active2');
+                $(el).on('click',async function(){
+                    if(await switch_chat(chat_index))console.log('Kanal zostal zaladowany..');
                     });
 
             });
@@ -733,14 +824,31 @@ if(await load_chats(is_public)){
     $(this).addClass('active');    
 } 
 });
-
+$('.popup-options .close-btn1').on('click',function(){
+    $('.popup-layer').hide();
+});
 
 $('.chat-style-option').on('click',async function(){
     let style_id = $(this).attr('data-option') || 1; 
     if(await load_chat_style(parseInt(style_id,10))){
-        console.log('Wczytano styl chatu..'); 
-    } 
+        console.log('Wczytano styl chatu ..'); 
+        await update_chat('channel_style',parseInt(style_id,10))
+    }
 });
+
+
+
+
+$('.profile-section-tile[data-option=chat-nicks] .res-option').eq(0).on('click',async function(){
+
+var data = 'test';
+
+
+
+if(await load_popup('Lista uczestników konwersacji',data))console.log('Dziala..');
+});
+
+
 
 
 

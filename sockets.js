@@ -109,7 +109,6 @@ module.exports = (server) => {
                 try {
                     const avatar = user?.avatar_file_id? await prisma.chat_acc_files.findUnique({where: { file_id: user.avatar_file_id },}): { file_path: '/img/defaults/avatar.png' };
         
-                    // Utwórz wiadomość w bazie danych
                     const newMessage = await prisma.chat_messages.create({
                         data: {
                             channel_id: parseInt(channelId, 10),
@@ -118,15 +117,17 @@ module.exports = (server) => {
                             message_type: 0,
                         },
                     });
+                    const created_time = new Date(newMessage.created_time);
+                    const formattedTime = `${created_time.getHours().toString().padStart(2, '0')}:${created_time.getMinutes().toString().padStart(2, '0')} ${created_time.getDate().toString().padStart(2, '0')}/${(created_time.getMonth() + 1).toString().padStart(2, '0')}`;
+                    
         
-                    // Emituj wiadomość do wszystkich w kanale
                     io.to(`channel-${channelId}`).emit('newMessage', {
                         member_id: newMessage.member_id,
                         message_id: newMessage.message_id,
                         username: nickname || user?.username,
                         avatar: avatar.file_path,
                         message: newMessage.message_txt,
-                        created_time: newMessage.created_time.toLocaleString(),
+                        created_time: formattedTime
                     });
         
                     callback({ success: true, messageId: newMessage.message_id });

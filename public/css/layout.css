@@ -27,16 +27,8 @@
 
 
 @media (max-width:1550px){
-body{
-    zoom:0.8!important;
-}
-
-}
-
-
-@media (max-width:1550px){
     body{
-        zoom:0.8!important;
+        zoom:0.82!important;
     }
     
     }
@@ -132,6 +124,78 @@ body,html{
     background-color: var(--white1);
 }
 
+
+
+.popup-layer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 30px;
+    box-sizing: border-box;
+    background-color: #00000026;
+    backdrop-filter: blur(1px);
+}
+.popup-window{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: clamp(500px, 50%, 600px);
+    min-height: 360px;
+    padding: 22px;
+    border-radius: 22px;
+    background-color: #ffffff;
+    box-shadow: 0px 0px 5px 3px rgb(255 255 255 / 25%);
+}
+.popup-top{
+    display: flex;
+    flex: none;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-size: 1.8em;    
+}
+.popup-title{
+    color: var(--black1);
+    font-weight:300;
+}
+.popup-options{
+    display: flex;
+    align-items: center;
+    gap:8px;
+}
+.popup-content{
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    width: 100%;
+    max-height: 280px;
+    overflow: hidden;
+    overflow-y: auto;
+    padding: 12px 0;
+    color: var(--gray2);
+}
+.popup-options>div{
+    font-size:1.2em;
+    transition: .5s ease;
+    transform-origin: center;
+    cursor: pointer;
+    color: var(--gray2);
+}
+.popup-options>div:hover{
+    transform: scale(1.1) rotate(90deg);
+    color: var(--black1);
+}
+
+
+
+
 #mess-input{
     -webkit-user-modify: read-write-plaintext-only;
     overflow-y: auto;
@@ -143,9 +207,6 @@ body,html{
     font-size: 1.1em;
     line-height: 120%;
 }
-
-
-
 .auth-mode-ovl a{
     color:inherit!important;
     text-decoration: none;
@@ -369,7 +430,6 @@ body,html{
     color: #ffffff;
 }
 
-/* Form Info */
 .form-info-ovl {
     display: flex;
     flex-direction: column;
@@ -551,8 +611,8 @@ body,html{
     justify-content: center;
     align-items: center;
     position: relative;
-    width: 110px;
-    height: 110px;
+    width: 100px;
+    height: 100px;
 }
 .avatar-contents{
     display: flex;
@@ -561,8 +621,9 @@ body,html{
     width: 100%;
     height: 100%;
     border-radius: 36%;
-    background-color: #d8ecff;
+    background-color: #e5f2ff;
     overflow: hidden;    
+    user-select: none;
 }
 .avatar-contents img{
     width: 100%;
@@ -595,7 +656,7 @@ body,html{
 .chat-threads{
     display: flex;
     flex: none;
-    width: 360px;
+    width: 350px;
     flex-direction: column;
     justify-content: flex-start;
     padding: 24px;
@@ -944,41 +1005,39 @@ body,html{
 .active-thread-profile{
     flex: none;
     display: flex;
-    width: 400px;
+    width: 380px;
     flex-direction: column;
     padding: 24px;
-    gap: 28px;
+    gap: 48px;
     border-left: 3px solid #f9f9f9;
 }
 .thread-profile-summary{
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     align-items: center;
-    margin-top: 8px; 
 }
 .profile-summary-card{
     display: flex;
     flex: auto;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
 }
 .profile-summary-info{
     display: flex;
     flex: auto;
     flex-direction: column;
-    align-items: center;
-    letter-spacing: 0.03em;  
+    align-items: center; 
 }
 .profile-summary-title{
-    font-size: 1.8em;
-    font-weight: 500;
+    font-size: 1.6em;
+    font-weight: 600;
     line-height: 1.3em;  
 }
 .profile-summary-details{
-    font-size: 0.7em;
-    color: #42a975;
+    font-size: 0.65em;
+    color: #b9b9b9;
 }
 .profile-summary-options{
     display: flex;
@@ -986,7 +1045,7 @@ body,html{
     justify-content: center;
     flex-direction: row;
     gap: 22px;
-    font-size: 0.85em;
+    font-size: 0.9em;
 }
 .profile-summary-option{
     display: flex;
@@ -1025,7 +1084,7 @@ body,html{
 .profile-section-title{
     color: #cfcfcf;
     font-weight: 500;
-    font-size: 0.9em; 
+    font-size: 0.85em; 
 }
 .profile-section-content{
     display: flex;
@@ -1043,7 +1102,6 @@ body,html{
     align-items: center;
     flex: auto;
     padding: 8px;
-    font-size: 1.05em;
     border-bottom: 1px solid #f9f9f9; 
     cursor: pointer;
 }
@@ -1061,6 +1119,7 @@ body,html{
 }
 .profile-section-res{
     display: none;
+    position: relative;
     padding:8px;
     padding-bottom:24px;
     flex-direction: column;
@@ -1070,21 +1129,43 @@ body,html{
     overflow: hidden;
     overflow-y:auto;
 }
+.res-options{
+    position: sticky;
+    top:0;
+    left:0;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    padding: 8px;
+    background-color: white;
+    cursor: pointer;
+}
+.res-option{
+    padding: 4px 24px;
+    font-size: 0.8em;
+    color: #201e2f;
+    background-color: #f8f8f8;
+    border-radius: 10px; 
+    cursor: pointer;
+    transition: .3s ease;
+}
+.res-option:hover{
+    background-color: #ededed;
+}
+.res-content{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+}
+
 
 .profile-shared-ovl{
     display: flex;
     flex-direction: column;
     gap:8px;
     flex: auto;  
-}
-.profile-shared-options{
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-    align-items: center;
-    padding: 8px;
-    margin-top:4px;
-    cursor: pointer;
 }
 .profile-shared-res{
     display: flex;
@@ -1105,13 +1186,6 @@ body,html{
     background-size: cover;
 }
 
-.shared-option{
-    padding: 4px 24px;
-    font-size: 0.8em;
-    color: #201e2f;
-    background-color: #f8f8f8;
-    border-radius: 10px;
-}
 
 .mess-hr{
     display: flex;
